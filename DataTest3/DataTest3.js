@@ -59,7 +59,7 @@ export default async function update(state) {
 
         ds.dispatch({
             name: 'BUILDING_USE',
-            args: [selectedBuilding?.id, mobileUnit?.id, payload, 0, 0],
+            args: [selectedBuilding?.id, mobileUnit?.id, payload],
         });
     }
 
@@ -79,7 +79,7 @@ export default async function update(state) {
 
         ds.dispatch({
             name: 'BUILDING_USE',
-            args: [selectedBuilding?.id, mobileUnit?.id, payload, numDuck, numBurger],
+            args: [selectedBuilding?.id, mobileUnit?.id, payload],
         });
     }
 
