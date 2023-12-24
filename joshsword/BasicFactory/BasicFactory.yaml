@@ -1,0 +1,37 @@
+
+---
+kind: BuildingKind
+spec:
+  category: factory
+  name: Chair Shop
+  description: Craft very important things
+  model: 01-10
+  color: 3
+  contract:
+    file: ./BasicFactory.sol
+  plugin:
+    file: ./BasicFactory.js
+  materials:
+  - name: Red Goo
+    quantity: 10
+  - name: Green Goo
+    quantity: 10
+  - name: Blue Goo
+    quantity: 10
+  inputs:
+  - name: Very Important Stuff
+    quantity: 1
+  outputs:
+  - name: Real Chair
+    quantity: 1
+
+---
+kind: Item
+spec:
+  name: Real Chair
+  icon: xx-01
+  goo:
+    red: 2
+    green: 2
+    blue: 2
+  stackable: false

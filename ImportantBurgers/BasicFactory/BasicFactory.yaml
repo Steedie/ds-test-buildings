@@ -1,0 +1,37 @@
+
+---
+kind: BuildingKind
+spec:
+  category: factory
+  name: Burgers
+  description: Make your burgers here
+  model: 12-17
+  color: 4
+  contract:
+    file: ./BasicFactory.sol
+  plugin:
+    file: ./BasicFactory.js
+  materials:
+  - name: Red Goo
+    quantity: 10
+  - name: Green Goo
+    quantity: 10
+  - name: Blue Goo
+    quantity: 10
+  inputs:
+  - name: Very Important Stuff
+    quantity: 1
+  outputs:
+  - name: Important Burger
+    quantity: 1
+
+---
+kind: Item
+spec:
+  name: Important Burger
+  icon: 11-248
+  goo:
+    red: 2
+    green: 2
+    blue: 2
+  stackable: true

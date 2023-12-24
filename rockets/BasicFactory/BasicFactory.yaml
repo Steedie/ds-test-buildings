@@ -1,0 +1,37 @@
+
+---
+kind: BuildingKind
+spec:
+  category: factory
+  name: Rocket Shop
+  description: Make rockets
+  model: 03-10
+  color: 4
+  contract:
+    file: ./BasicFactory.sol
+  plugin:
+    file: ./BasicFactory.js
+  materials:
+  - name: Red Goo
+    quantity: 10
+  - name: Green Goo
+    quantity: 10
+  - name: Blue Goo
+    quantity: 10
+  inputs:
+  - name: Red Goo
+    quantity: 100
+  outputs:
+  - name: Pointy Rocket
+    quantity: 1
+
+---
+kind: Item
+spec:
+  name: Pointy Rocket
+  icon: 30-115
+  goo:
+    red: 50
+    green: 0
+    blue: 0
+  stackable: false

@@ -1,0 +1,18 @@
+kind: BuildingKind
+spec:
+  name: Data Test Building
+  description: "A test building for storing data somehow."
+  category: custom
+  model: 13-06
+  color: 1
+  contract:
+    file: ./DataTest.sol
+  plugin:
+    file: ./DataTest.js
+  materials:
+    - name: Green Goo
+      quantity: 10
+    - name: Blue Goo
+      quantity: 10
+    - name: Red Goo
+      quantity: 10
