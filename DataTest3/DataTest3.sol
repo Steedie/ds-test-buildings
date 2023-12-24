@@ -12,31 +12,31 @@ import "@ds/utils/LibString.sol";
 using Schema for State;
 
 contract DataTest3 is BuildingKind {
+    uint256 gameActive = 0; // unused
 
     // we expect payload to contain a single 4 byte number reperesenting length of session in blocks
-    function use(Game ds, bytes24 buildingInstance, bytes24, /*actor*/ bytes memory payload ) public {
-        // Extract values
-        uint32 packedValues;
-        for (uint i = 0; i < 3; i++) {
-            packedValues = (packedValues << 8) | uint32(uint8(payload[i]));
+    function use(Game ds, bytes24 buildingInstance, bytes24, bytes memory payload ) public {
+        
+        // convert payload
+        uint32 payloadAsUint32;
+        for (uint i = 0; i < 4; i++) {
+            payloadAsUint32 = (payloadAsUint32 << 8) | uint32(uint8(payload[i]));
         }
 
-        // Now packedValues contains the three values in its 24 least significant bits
-        uint8 gameActive = uint8(packedValues >> 16); // Extracts the first byte
-        uint8 numDuck = uint8(packedValues >> 8);    // Extracts the second byte
-        uint8 numBurger = uint8(packedValues);       // Extracts the third byte
+        // Convert all values to strings
+        string memory payloadStr = LibString.toString(payloadAsUint32);
+        string memory numDuckStr = LibString.toString(numDuck);
+        string memory numBurgerStr = LibString.toString(numBurger);
 
-        // Convert values to strings and concatenate
-        string memory result = string(abi.encodePacked(
-            LibString.toString(gameActive), ", ",
-            LibString.toString(numDuck), ", ",
-            LibString.toString(numBurger)
+        // Concatenate the strings using abi.encodePacked
+        string memory concatenatedString = string(abi.encodePacked(
+            payloadStr, " ", numDuckStr, " ", numBurgerStr
         ));
-
-        // Write to building kind description
+        
+        // Use the concatenated string in the state.annotate call
         State state = GetState(ds);
         bytes24 buildingkind = state.getBuildingKind(buildingInstance);
-        state.annotate(buildingkind, "description", result);
+        state.annotate(buildingkind, "description", LibString.toString(concatenatedString));
     }
 
     function GetState(Game ds) internal returns (State) {

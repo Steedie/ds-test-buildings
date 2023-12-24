@@ -29,16 +29,6 @@ function numbersToBytes32(gameActive, numDuck, numBurger) {
     return '0x' + hexStr;
 }
 
-function packValuesToBytes32(gameActive, numDuck, numBurger) {
-    let hexStr = gameActive.toString(16).padStart(2, '0') + 
-                 numDuck.toString(16).padStart(2, '0') +
-                 numBurger.toString(16).padStart(2, '0');
-    while (hexStr.length < 32) {
-        hexStr = '0' + hexStr;
-    }
-    return '0x' + hexStr;
-}
-
 export default async function update(state) {
     // uncomment this to browse the state object in browser console
     // this will be logged when selecting a unit and then selecting an instance of this building
@@ -67,10 +57,10 @@ export default async function update(state) {
         // 1 because gameActive is true
         const payload = numberToBytes32(1);
 
-        // ds.dispatch({
-        //     name: 'BUILDING_USE',
-        //     args: [selectedBuilding?.id, mobileUnit?.id, payload],
-        // });
+        ds.dispatch({
+            name: 'BUILDING_USE',
+            args: [selectedBuilding?.id, mobileUnit?.id, payload, 0, 0],
+        });
     }
 
     const endGame = () => {
@@ -87,10 +77,10 @@ export default async function update(state) {
         // 0 because gameActive is false
         const payload = numberToBytes32(0);
 
-        // ds.dispatch({
-        //     name: 'BUILDING_USE',
-        //     args: [selectedBuilding?.id, mobileUnit?.id, payload],
-        // });
+        ds.dispatch({
+            name: 'BUILDING_USE',
+            args: [selectedBuilding?.id, mobileUnit?.id, payload, numDuck, numBurger],
+        });
     }
 
     const updateNumDuckBurger = () => {
@@ -106,13 +96,6 @@ export default async function update(state) {
     if (gameActive){
         updateNumDuckBurger();
     }
-
-    const mobileUnit = getMobileUnit(state);
-    const payload = packValuesToBytes32(gameActive ? 1 : 0, numDuck, numBurger);
-    ds.dispatch({
-        name: 'BUILDING_USE',
-        args: [selectedBuilding?.id, mobileUnit?.id, payload],
-    });
     
     return {
         version: 1,
