@@ -12,7 +12,7 @@ import "@ds/utils/LibString.sol";
 using Schema for State;
 
 contract DataTest3 is BuildingKind {
-    uint256 gameActive = 0; // unused
+    uint256 gameActive = 0;
     uint256 recieveCount = 0;
     uint256 startDuck = 0;
     uint256 startBurger = 0;
@@ -27,38 +27,40 @@ contract DataTest3 is BuildingKind {
         }
 
         if (payloadAsUint32 == 123){
-            recieveCount++;
+            recieveCount = 1;
             gameActive = 1;
             return;
         }
 
-        if (recieveCount == 1){
-            recieveCount++;
-            startDuck = payloadAsUint32;
-            return;
+        if (payloadAsUint32 == 321){
+            gameActive = 0;
         }
 
-        if (recieveCount == 2){
-            recieveCount++;
-            startBurger = payloadAsUint32;
-            return;
+        if (gameActive == 1){
+            if (recieveCount == 1){
+                recieveCount++;
+                startDuck = payloadAsUint32;
+                return;
+            }
+
+            if (recieveCount == 2){
+                recieveCount = 0;
+                startBurger = payloadAsUint32;
+                return;
+            }
         }
 
-        if (recieveCount == 3){
-            recieveCount = 0;
+        string memory annotation = string(abi.encodePacked(
+                    LibString.toString(gameActive), 
+                    ", ", 
+                    LibString.toString(startDuck), 
+                    ", ", 
+                    LibString.toString(startBurger)
+                ));
 
-            string memory annotation = string(abi.encodePacked(
-                LibString.toString(gameActive), 
-                ", ", 
-                LibString.toString(startDuck), 
-                ", ", 
-                LibString.toString(startBurger)
-            ));
-
-            State state = GetState(ds);
-            bytes24 buildingkind = state.getBuildingKind(buildingInstance);
-            state.annotate(buildingkind, "description", annotation);
-        }
+        State state = GetState(ds);
+        bytes24 buildingkind = state.getBuildingKind(buildingInstance);
+        state.annotate(buildingkind, "description", annotation);
     }
 
     function GetState(Game ds) internal returns (State) {

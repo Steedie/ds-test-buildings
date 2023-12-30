@@ -1,12 +1,7 @@
 import ds from 'downstream';
 
-var numDuckStart = 0;
-var numBurgerStart = 0;
-
 var numDuck = 0;
 var numBurger = 0;
-
-var gameActive = false;
 
 var sendCount = 0;
 
@@ -19,6 +14,15 @@ function numberToBytes32(number) {
         hexStr = '0' + hexStr;
     }
     return '0x' + hexStr;
+}
+
+function buildingDescriptionData(description){
+    let values = description.split(', ').map(Number);
+    return {
+        gameActive: values[0] === 1,
+        startDuck: values[1],
+        startBurger: values[2]
+    };
 }
 
 export default async function update(state) {
@@ -36,41 +40,14 @@ export default async function update(state) {
     }
     
     const startGame = () => {
-        const mobileUnit = getMobileUnit(state);
-        const buildingsArray = state.world?.buildings || [];
-    
-        numDuckStart = countBuildings(buildingsArray, "duck");
-        numBurgerStart = countBuildings(buildingsArray, "burger");
-    
         numDuck = 0;
         numBurger = 0;
-        gameActive = true;
-
-        sendCount++;
-
-        // 1 because gameActive is true
-        const payload = numberToBytes32(1);
-
-        ds.dispatch({
-            name: 'BUILDING_USE',
-            args: [selectedBuilding?.id, mobileUnit?.id, payload],
-        });
+        sendCount = 1;
     }
 
     const endGame = () => {
         const mobileUnit = getMobileUnit(state);
-        const buildingsArray = state.world?.buildings || [];
-    
-        const totalDuck = countBuildings(buildingsArray, "duck");
-        const totalBurger = countBuildings(buildingsArray, "burger");
-    
-        numDuck = totalDuck - numDuckStart;
-        numBurger = totalBurger - numBurgerStart;
-        gameActive = false;
-
-        // 0 because gameActive is false
-        const payload = numberToBytes32(0);
-
+        const payload = numberToBytes32(321); // key to set game active to false on solidity side
         ds.dispatch({
             name: 'BUILDING_USE',
             args: [selectedBuilding?.id, mobileUnit?.id, payload],
@@ -83,11 +60,11 @@ export default async function update(state) {
         const totalDuck = countBuildings(buildingsArray, "duck");
         const totalBurger = countBuildings(buildingsArray, "burger");
     
-        numDuck = totalDuck - numDuckStart;
-        numBurger = totalBurger - numBurgerStart;
+        numDuck = totalDuck - buildingDescriptionData(selectedBuilding?.kind?.description?.value || "0, 0, 0").startDuck;
+        numBurger = totalBurger - buildingDescriptionData(selectedBuilding?.kind?.description?.value || "0, 0, 0").startBurger;
     }
 
-    if (gameActive){
+    if (buildingDescriptionData(selectedBuilding?.kind?.description?.value || "0, 0, 0").gameActive){
         updateNumDuckBurger();
     }
 
@@ -105,16 +82,9 @@ export default async function update(state) {
                 }
                 case 2:
                     {
+                        const buildingsArray = state.world?.buildings || [];
+                        const numDuckStart = countBuildings(buildingsArray, "duck");
                         const payload = numberToBytes32(numDuckStart);
-                        ds.dispatch({
-                            name: 'BUILDING_USE',
-                            args: [selectedBuilding?.id, mobileUnit?.id, payload],
-                        });
-                        sendCount++;
-                    }
-                case 2:
-                    {
-                        const payload = numberToBytes32(numBurgerStart);
                         ds.dispatch({
                             name: 'BUILDING_USE',
                             args: [selectedBuilding?.id, mobileUnit?.id, payload],
@@ -123,7 +93,9 @@ export default async function update(state) {
                     }
                 case 3:
                     {
-                        const payload = numberToBytes32(321);
+                        const buildingsArray = state.world?.buildings || [];
+                        const numBurgerStart = countBuildings(buildingsArray, "burger");
+                        const payload = numberToBytes32(numBurgerStart);
                         ds.dispatch({
                             name: 'BUILDING_USE',
                             args: [selectedBuilding?.id, mobileUnit?.id, payload],
@@ -132,6 +104,8 @@ export default async function update(state) {
                     }
         }
     }
+
+    const gameActive = buildingDescriptionData(selectedBuilding?.kind?.description?.value || "0, 0, 0").gameActive;
     
     return {
         version: 1,
