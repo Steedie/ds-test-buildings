@@ -1,0 +1,18 @@
+kind: BuildingKind
+spec:
+  name: Data Tester V
+  description: "Building for testing the sending of data, but mainly to test ds.encodeCall"
+  category: custom
+  model: 04-05
+  color: 5
+  contract:
+    file: ./DataTest5.sol
+  plugin:
+    file: ./DataTest5.js
+  materials:
+    - name: Green Goo
+      quantity: 10
+    - name: Blue Goo
+      quantity: 10
+    - name: Red Goo
+      quantity: 10
